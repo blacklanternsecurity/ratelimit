@@ -60,6 +60,12 @@ jobs:
         go-version: ${{ matrix.go-version }}
         cache: true
     
+    - name: Check Go version
+      run: |
+        go version
+        echo "GOROOT: $GOROOT"
+        echo "GOTOOLCHAIN: $GOTOOLCHAIN"
+    
     - name: Download dependencies
       run: go mod download
     

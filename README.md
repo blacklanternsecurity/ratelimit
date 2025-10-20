@@ -192,6 +192,44 @@ func RateLimitMiddleware(limiter *ratelimit.Limiter) func(http.Handler) http.Han
 }
 ```
 
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests
+go test -v ./...
+
+# Run with race detection
+go test -race -v ./...
+
+# Run specific test
+go test -v -run TestBasicRateLimit
+```
+
+### Linting
+
+The project uses standard Go tools for code quality:
+
+```bash
+# Check for common issues
+go vet ./...
+
+# Check formatting
+gofmt -s -l .
+
+# Auto-format code
+gofmt -s -w .
+```
+
+### CI/CD
+
+The GitHub Actions workflow automatically runs:
+- `go vet` for static analysis
+- `gofmt` for code formatting checks
+- Full test suite across Go versions 1.19-1.22
+- Redis integration tests
+
 ## Performance
 
 - **Non-blocking**: No locks in the hot path
