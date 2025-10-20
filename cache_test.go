@@ -18,7 +18,7 @@ func TestNormalizeIP(t *testing.T) {
 		IncludeDestination: true,
 	}
 	limiter := New(config)
-	
+
 	tests := []struct {
 		name     string
 		input    string
@@ -548,7 +548,7 @@ func TestNormalizeIPWithDifferentMasks(t *testing.T) {
 		IncludeDestination: true,
 	}
 	limiter24 := New(config24)
-	
+
 	// Test IPv6 /64 mask
 	config64 := Config{
 		Capacity:           100,

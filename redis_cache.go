@@ -20,11 +20,11 @@ type RedisCache struct {
 
 // RedisConfig holds configuration for the Redis cache
 type RedisConfig struct {
-	Addr     string        // Redis server address (e.g., "localhost:6379")
-	Password string        // Redis password (empty for no auth)
-	DB       int           // Redis database number
-	KeyPrefix string       // Prefix for all keys (e.g., "ratelimit:")
-	TTL      time.Duration // Default TTL for keys
+	Addr      string        // Redis server address (e.g., "localhost:6379")
+	Password  string        // Redis password (empty for no auth)
+	DB        int           // Redis database number
+	KeyPrefix string        // Prefix for all keys (e.g., "ratelimit:")
+	TTL       time.Duration // Default TTL for keys
 }
 
 // NewRedisCache creates a new Redis cache with the specified configuration
@@ -38,7 +38,7 @@ func NewRedisCache(config RedisConfig) (*RedisCache, error) {
 	// Test the connection with a timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	
+
 	if err := rdb.Ping(ctx).Err(); err != nil {
 		return nil, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
@@ -78,7 +78,7 @@ func (r *RedisCache) Get(key uint64) *ClientLimiter {
 // Set stores a value in Redis
 func (r *RedisCache) Set(key uint64, value *ClientLimiter) {
 	redisKey := r.getRedisKey(key)
-	
+
 	// Pack into 16 bytes: 8 bytes float64 + 8 bytes int64 timestamp
 	data := make([]byte, 16)
 	binary.LittleEndian.PutUint64(data[0:8], math.Float64bits(value.allowedRequests))
