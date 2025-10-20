@@ -63,7 +63,7 @@ func main() {
 config := ratelimit.Config{
     Capacity:           1000,              // Cache capacity
     WindowSize:         60 * time.Second,  // Rate limit window
-    MaxReqs:            100,               // Requests per window
+    MaxReqs:            100,               // Requests per window (this doubles as the max burst capacity)
     Expiration:         5 * time.Minute,   // Cache entry TTL
     IPv4SubnetMask:     24,                // /24 subnet for IPv4
     IPv6SubnetMask:     56,                // /56 subnet for IPv6
