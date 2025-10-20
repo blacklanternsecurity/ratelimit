@@ -94,10 +94,10 @@ defer limiter.Close()
 
 | Option | Type | Description | Default |
 |--------|------|-------------|---------|
-| `Capacity` | `int` | Maximum number of rate limiters to cache | `100` |
+| `Capacity` | `int` | Maximum number of rate limiters to cache | `100000` |
 | `WindowSize` | `time.Duration` | Time window for rate limiting | `1 * time.Second` |
 | `MaxReqs` | `int` | Maximum requests allowed per window | `10` |
-| `Expiration` | `time.Duration` | How long to keep rate limiters in cache | `60 * time.Second` |
+| `Expiration` | `time.Duration` | How long to keep rate limiters in cache | `1 * time.Hour` |
 | `IPv4SubnetMask` | `int` | IPv4 subnet mask for IP normalization | `32` (no squashing) |
 | `IPv6SubnetMask` | `int` | IPv6 subnet mask for IP normalization | `56` |
 | `IncludeSource` | `bool` | Include source IP in rate limit key | `true` |

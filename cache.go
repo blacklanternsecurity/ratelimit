@@ -82,10 +82,10 @@ func NewWithRedis(config Config, redisConfig RedisConfig) (*Limiter, error) {
 // NewDefault creates a limiter with sensible defaults
 func NewDefault() *Limiter {
 	config := Config{
-		Capacity:           100,
+		Capacity:           100000,
 		WindowSize:         1 * time.Second,
 		MaxReqs:            10,
-		Expiration:         60 * time.Second,
+		Expiration:         1 * time.Hour,
 		IPv4SubnetMask:     32, // No IPv4 squashing
 		IPv6SubnetMask:     56, // /56 IPv6 squashing
 		IncludeSource:      true,
