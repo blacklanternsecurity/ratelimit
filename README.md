@@ -1,5 +1,7 @@
 # Rate Limiter
 
+[![Go Version](https://img.shields.io/badge/go-1.19+-FF8400.svg)](https://golang.org/) [![License](https://img.shields.io/badge/license-GPLv3-FF8400.svg)](LICENSE) [![Tests](https://github.com/blacklanternsecurity/ratelimit/workflows/Tests/badge.svg)](https://github.com/blacklanternsecurity/ratelimit/actions)
+
 A high-performance, non-blocking token bucket rate limiter designed for HTTP projects. Features accurate retry-after headers, multiple cache backends (in-memory and Redis), and flexible IP normalization to prevent circumvention via [IPv6 source address spoofing](https://github.com/blacklanternsecurity/trevorproxy).
 
 ## Features
