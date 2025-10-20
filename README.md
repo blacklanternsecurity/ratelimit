@@ -1,5 +1,7 @@
 # Rate Limiter
 
+[![Go Version](https://img.shields.io/badge/go-1.19+-FF8400.svg)](https://golang.org/) [![License](https://img.shields.io/badge/license-GPLv3-FF8400.svg)](LICENSE) [![Tests](https://github.com/blacklanternsecurity/ratelimit/workflows/Tests/badge.svg)](https://github.com/blacklanternsecurity/ratelimit/actions)
+
 A high-performance, non-blocking token bucket rate limiter designed for HTTP projects. Features accurate retry-after headers, multiple cache backends (in-memory and Redis), and flexible IP normalization to prevent circumvention via [IPv6 source address spoofing](https://github.com/blacklanternsecurity/trevorproxy).
 
 ## Features
@@ -94,10 +96,10 @@ defer limiter.Close()
 
 | Option | Type | Description | Default |
 |--------|------|-------------|---------|
-| `Capacity` | `int` | Maximum number of rate limiters to cache | `100` |
+| `Capacity` | `int` | Maximum number of rate limiters to cache | `100000` |
 | `WindowSize` | `time.Duration` | Time window for rate limiting | `1 * time.Second` |
 | `MaxReqs` | `int` | Maximum requests allowed per window | `10` |
-| `Expiration` | `time.Duration` | How long to keep rate limiters in cache | `60 * time.Second` |
+| `Expiration` | `time.Duration` | How long to keep rate limiters in cache | `1 * time.Hour` |
 | `IPv4SubnetMask` | `int` | IPv4 subnet mask for IP normalization | `32` (no squashing) |
 | `IPv6SubnetMask` | `int` | IPv6 subnet mask for IP normalization | `56` |
 | `IncludeSource` | `bool` | Include source IP in rate limit key | `true` |
