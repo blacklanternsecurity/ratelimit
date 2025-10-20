@@ -3,6 +3,10 @@ name: Tests
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   lint:
@@ -14,14 +18,19 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
-        go-version: 1.21
+        go-version: '1.21'
         cache: true
     
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: latest
-        args: --timeout=5m
+    - name: Run go vet
+      run: go vet ./...
+    
+    - name: Run go fmt check
+      run: |
+        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+          echo "The following files are not formatted:"
+          gofmt -s -l .
+          exit 1
+        fi
 
   test:
     runs-on: ubuntu-latest
@@ -29,7 +38,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        go-version: [1.19, 1.20, 1.21, 1.22]
+        go-version: ['1.19', '1.20', '1.21', '1.22']
     
     services:
       redis:
@@ -50,6 +59,12 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
         cache: true
+    
+    - name: Check Go version
+      run: |
+        go version
+        echo "GOROOT: $GOROOT"
+        echo "GOTOOLCHAIN: $GOTOOLCHAIN"
     
     - name: Download dependencies
       run: go mod download

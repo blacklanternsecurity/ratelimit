@@ -36,7 +36,6 @@ func TestRedisCache(t *testing.T) {
 	if retrieved.allowedRequests != limiter.allowedRequests {
 		t.Errorf("Expected allowedRequests %f, got %f", limiter.allowedRequests, retrieved.allowedRequests)
 	}
-	
 
 	// Test Delete
 	cache.Delete(key)

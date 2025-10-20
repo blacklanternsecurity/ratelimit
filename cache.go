@@ -44,7 +44,7 @@ type ClientLimiter struct {
 
 func New(config Config) *Limiter {
 	cache := NewMemoryCache(config.Capacity, config.Expiration)
-	
+
 	return &Limiter{
 		cache:              cache,
 		windowSize:         config.WindowSize,
@@ -75,7 +75,7 @@ func NewWithRedis(config Config, redisConfig RedisConfig) (*Limiter, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return NewWithCache(config, redisCache), nil
 }
 
@@ -93,7 +93,6 @@ func NewDefault() *Limiter {
 	}
 	return New(config)
 }
-
 
 // normalizeIP normalizes an IP address for rate limiting using configurable subnet masks
 func (l *Limiter) normalizeIP(ipStr string) string {
@@ -131,17 +130,17 @@ func normalizeDestination(destination string) string {
 func (l *Limiter) createCacheKey(normalizedIP, destination, identifier string) uint64 {
 	// Use FNV-1a hash for fast, non-cryptographic hashing
 	h := fnv.New64a()
-	
+
 	if l.includeSource {
 		h.Write([]byte(normalizedIP))
 		h.Write([]byte("|"))
 	}
-	
+
 	if l.includeDestination {
 		h.Write([]byte(destination))
 		h.Write([]byte("|"))
 	}
-	
+
 	h.Write([]byte(identifier))
 	return h.Sum64()
 }
@@ -208,4 +207,3 @@ func (l *Limiter) IsAllowed(ip, destination, identifier string, maxReqs ...int) 
 
 	return retryAfter
 }
-
