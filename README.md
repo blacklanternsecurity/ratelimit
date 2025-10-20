@@ -1,6 +1,6 @@
 # Rate Limiter
 
-A high-performance, non-blocking token bucket rate limiter designed for HTTP projects. Features accurate retry-after headers, multiple cache backends (in-memory and Redis), and flexible IP normalization to prevent circumvention via IPv6 source address spoofing, etc.
+A high-performance, non-blocking token bucket rate limiter designed for HTTP projects. Features accurate retry-after headers, multiple cache backends (in-memory and Redis), and flexible IP normalization to prevent circumvention via [IPv6 source address spoofing](https://github.com/blacklanternsecurity/trevorproxy).
 
 ## Features
 
