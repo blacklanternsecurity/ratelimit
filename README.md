@@ -223,18 +223,3 @@ gofmt -s -l .
 # Auto-format code
 gofmt -s -w .
 ```
-
-### CI/CD
-
-The GitHub Actions workflow automatically runs:
-- `go vet` for static analysis
-- `gofmt` for code formatting checks
-- Full test suite across Go versions 1.19-1.22
-- Redis integration tests
-
-## Performance
-
-- **Non-blocking**: No locks in the hot path
-- **Memory efficient**: Configurable cache size and TTL
-- **Fast**: Optimized hash functions and minimal allocations
-- **Scalable**: Redis backend supports distributed deployments
