@@ -190,3 +190,8 @@ func (l *Limiter) IsAllowed(ip, destination, identifier string, maxReqs ...int) 
 
 	return retryAfter
 }
+
+// Close closes the underlying cache and cleans up resources
+func (l *Limiter) Close() error {
+	return l.cache.Close()
+}
