@@ -598,3 +598,51 @@ func TestBlankInputs(t *testing.T) {
 		t.Error("Third request with blank destination should be blocked")
 	}
 }
+
+func TestLimiterClose(t *testing.T) {
+	// Test Close method with memory cache
+	config := Config{
+		Capacity:   100,
+		WindowSize: 1 * time.Second,
+		MaxReqs:    10,
+		Expiration: 60 * time.Second,
+	}
+	limiter := New(config)
+
+	// Close should not return an error
+	if err := limiter.Close(); err != nil {
+		t.Errorf("Close() should not return error for memory cache, got: %v", err)
+	}
+}
+
+func TestLimiterCloseWithRedis(t *testing.T) {
+	// Skip if Redis is not available
+	if testing.Short() {
+		t.Skip("Skipping Redis test in short mode")
+	}
+
+	config := Config{
+		Capacity:   100,
+		WindowSize: 1 * time.Second,
+		MaxReqs:    10,
+		Expiration: 60 * time.Second,
+	}
+
+	redisConfig := RedisConfig{
+		Addr:      "localhost:6379",
+		Password:  "",
+		DB:        0,
+		KeyPrefix: "test:",
+		TTL:       60 * time.Second,
+	}
+
+	limiter, err := NewWithRedis(config, redisConfig)
+	if err != nil {
+		t.Skipf("Redis not available, skipping test: %v", err)
+	}
+
+	// Close should not return an error
+	if err := limiter.Close(); err != nil {
+		t.Errorf("Close() should not return error for Redis cache, got: %v", err)
+	}
+}
