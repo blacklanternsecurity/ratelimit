@@ -66,11 +66,5 @@ jobs:
         echo "GOROOT: $GOROOT"
         echo "GOTOOLCHAIN: $GOTOOLCHAIN"
     
-    - name: Download dependencies
-      run: go mod download
-    
-    - name: Verify dependencies
-      run: go mod verify
-    
     - name: Run tests
       run: go test -v ./...

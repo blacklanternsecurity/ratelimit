@@ -63,12 +63,10 @@ func main() {
 config := ratelimit.Config{
     Capacity:           1000,              // Cache capacity
     WindowSize:         60 * time.Second,  // Rate limit window
-    MaxReqs:            100,               // Requests per window
+    MaxReqs:            100,               // Requests per window (this doubles as the max burst capacity)
     Expiration:         5 * time.Minute,   // Cache entry TTL
     IPv4SubnetMask:     24,                // /24 subnet for IPv4
     IPv6SubnetMask:     56,                // /56 subnet for IPv6
-    IncludeSource:      true,              // Include source IP in key
-    IncludeDestination: true,              // Include destination in key
 }
 
 limiter := ratelimit.New(config)
@@ -98,12 +96,10 @@ defer limiter.Close()
 |--------|------|-------------|---------|
 | `Capacity` | `int` | Maximum number of rate limiters to cache | `100000` |
 | `WindowSize` | `time.Duration` | Time window for rate limiting | `1 * time.Second` |
-| `MaxReqs` | `int` | Maximum requests allowed per window | `10` |
+| `MaxReqs` | `int` | Maximum requests allowed per window (doubles as max burst) | `10` |
 | `Expiration` | `time.Duration` | How long to keep rate limiters in cache | `1 * time.Hour` |
 | `IPv4SubnetMask` | `int` | IPv4 subnet mask for IP normalization | `32` (no squashing) |
 | `IPv6SubnetMask` | `int` | IPv6 subnet mask for IP normalization | `56` |
-| `IncludeSource` | `bool` | Include source IP in rate limit key | `true` |
-| `IncludeDestination` | `bool` | Include destination in rate limit key | `true` |
 
 ## API Reference
 
@@ -112,9 +108,9 @@ defer limiter.Close()
 Checks if a request should be allowed and returns the retry-after time in seconds.
 
 **Parameters:**
-- `ip`: Client IP address
-- `destination`: Destination hostname/URL
-- `identifier`: Custom identifier for the rate limit
+- `ip`: Source IP address (optional, automatically normalized)
+- `destination`: Destination hostname/URL (optional, automatically normalized)
+- `identifier`: Custom identifier for the rate limit (e.g. API key, user ID, etc.)
 - `maxReqs`: Optional override for max requests (uses config default if not provided)
 
 **Returns:**
@@ -223,18 +219,3 @@ gofmt -s -l .
 # Auto-format code
 gofmt -s -w .
 ```
-
-### CI/CD
-
-The GitHub Actions workflow automatically runs:
-- `go vet` for static analysis
-- `gofmt` for code formatting checks
-- Full test suite across Go versions 1.19-1.22
-- Redis integration tests
-
-## Performance
-
-- **Non-blocking**: No locks in the hot path
-- **Memory efficient**: Configurable cache size and TTL
-- **Fast**: Optimized hash functions and minimal allocations
-- **Scalable**: Redis backend supports distributed deployments

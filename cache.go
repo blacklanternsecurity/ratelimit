@@ -16,24 +16,20 @@ look, I don't care what it's called, bucket, leaky, token, windows, sliding what
 */
 
 type Config struct {
-	Capacity           int
-	WindowSize         time.Duration
-	MaxReqs            int
-	Expiration         time.Duration
-	IPv4SubnetMask     int
-	IPv6SubnetMask     int
-	IncludeSource      bool
-	IncludeDestination bool
+	Capacity       int
+	WindowSize     time.Duration
+	MaxReqs        int
+	Expiration     time.Duration
+	IPv4SubnetMask int
+	IPv6SubnetMask int
 }
 
 type Limiter struct {
-	cache              Cache
-	windowSize         time.Duration
-	maxReqs            int
-	ipv4SubnetMask     int
-	ipv6SubnetMask     int
-	includeSource      bool
-	includeDestination bool
+	cache          Cache
+	windowSize     time.Duration
+	maxReqs        int
+	ipv4SubnetMask int
+	ipv6SubnetMask int
 }
 
 type ClientLimiter struct {
@@ -46,26 +42,22 @@ func New(config Config) *Limiter {
 	cache := NewMemoryCache(config.Capacity, config.Expiration)
 
 	return &Limiter{
-		cache:              cache,
-		windowSize:         config.WindowSize,
-		maxReqs:            config.MaxReqs,
-		ipv4SubnetMask:     config.IPv4SubnetMask,
-		ipv6SubnetMask:     config.IPv6SubnetMask,
-		includeSource:      config.IncludeSource,
-		includeDestination: config.IncludeDestination,
+		cache:          cache,
+		windowSize:     config.WindowSize,
+		maxReqs:        config.MaxReqs,
+		ipv4SubnetMask: config.IPv4SubnetMask,
+		ipv6SubnetMask: config.IPv6SubnetMask,
 	}
 }
 
 // NewWithCache creates a limiter with a custom cache implementation
 func NewWithCache(config Config, cache Cache) *Limiter {
 	return &Limiter{
-		cache:              cache,
-		windowSize:         config.WindowSize,
-		maxReqs:            config.MaxReqs,
-		ipv4SubnetMask:     config.IPv4SubnetMask,
-		ipv6SubnetMask:     config.IPv6SubnetMask,
-		includeSource:      config.IncludeSource,
-		includeDestination: config.IncludeDestination,
+		cache:          cache,
+		windowSize:     config.WindowSize,
+		maxReqs:        config.MaxReqs,
+		ipv4SubnetMask: config.IPv4SubnetMask,
+		ipv6SubnetMask: config.IPv6SubnetMask,
 	}
 }
 
@@ -82,14 +74,12 @@ func NewWithRedis(config Config, redisConfig RedisConfig) (*Limiter, error) {
 // NewDefault creates a limiter with sensible defaults
 func NewDefault() *Limiter {
 	config := Config{
-		Capacity:           100000,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            10,
-		Expiration:         1 * time.Hour,
-		IPv4SubnetMask:     32, // No IPv4 squashing
-		IPv6SubnetMask:     56, // /56 IPv6 squashing
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100000,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        10,
+		Expiration:     1 * time.Hour,
+		IPv4SubnetMask: 32, // No IPv4 squashing
+		IPv6SubnetMask: 56, // /56 IPv6 squashing
 	}
 	return New(config)
 }
@@ -130,17 +120,10 @@ func normalizeDestination(destination string) string {
 func (l *Limiter) createCacheKey(normalizedIP, destination, identifier string) uint64 {
 	// Use FNV-1a hash for fast, non-cryptographic hashing
 	h := fnv.New64a()
-
-	if l.includeSource {
-		h.Write([]byte(normalizedIP))
-		h.Write([]byte("|"))
-	}
-
-	if l.includeDestination {
-		h.Write([]byte(destination))
-		h.Write([]byte("|"))
-	}
-
+	h.Write([]byte(normalizedIP))
+	h.Write([]byte("|"))
+	h.Write([]byte(destination))
+	h.Write([]byte("|"))
 	h.Write([]byte(identifier))
 	return h.Sum64()
 }
