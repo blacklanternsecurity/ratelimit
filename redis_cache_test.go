@@ -62,12 +62,10 @@ func TestRedisCacheWithLimiter(t *testing.T) {
 
 	// Create a limiter with Redis cache
 	limiterConfig := Config{
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 
 	limiter := NewWithCache(limiterConfig, redisCache)

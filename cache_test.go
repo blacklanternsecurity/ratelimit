@@ -8,14 +8,12 @@ import (
 func TestNormalizeIP(t *testing.T) {
 	// Test with default configuration (IPv4 no squashing, IPv6 /56)
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 
@@ -63,14 +61,12 @@ func TestNormalizeIP(t *testing.T) {
 
 func TestLimiterIPv4AndIPv6(t *testing.T) {
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 	destination := "api.example.com"
@@ -106,14 +102,12 @@ func TestLimiterIPv4AndIPv6(t *testing.T) {
 
 func TestLimiterOverrideMaxReqs(t *testing.T) {
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 	ip := "192.168.1.1"
@@ -142,14 +136,12 @@ func TestLimiterOverrideMaxReqs(t *testing.T) {
 
 func TestLimiterPerDestination(t *testing.T) {
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 	ip1 := "192.168.1.1"
@@ -231,14 +223,12 @@ func TestLimiterPerDestination(t *testing.T) {
 
 func TestLimiterCaseInsensitiveDestination(t *testing.T) {
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 	ip := "192.168.1.1"
@@ -318,14 +308,12 @@ func TestNormalizeDestination(t *testing.T) {
 func TestBasicRateLimit(t *testing.T) {
 	// 2 requests per 5 seconds
 	config := Config{
-		Capacity:           100,
-		WindowSize:         5 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     5 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 	ip := "192.168.1.1"
@@ -407,14 +395,12 @@ func TestBasicRateLimit(t *testing.T) {
 func TestIPv4SubnetSquashing(t *testing.T) {
 	// Test IPv4 /24 subnet squashing
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     24,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 24,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 	destination := "api.example.com"
@@ -443,14 +429,12 @@ func TestIPv4SubnetSquashing(t *testing.T) {
 func TestIPv6SubnetSquashing(t *testing.T) {
 	// Test IPv6 /64 subnet squashing (more aggressive than default /56)
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     64,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 64,
 	}
 	limiter := New(config)
 	destination := "api.example.com"
@@ -484,14 +468,12 @@ func TestIPv6SubnetSquashing(t *testing.T) {
 func TestNoSubnetSquashing(t *testing.T) {
 	// Test with no subnet squashing (32 for IPv4, 128 for IPv6)
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     128,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 128,
 	}
 	limiter := New(config)
 	destination := "api.example.com"
@@ -538,27 +520,23 @@ func TestNoSubnetSquashing(t *testing.T) {
 func TestNormalizeIPWithDifferentMasks(t *testing.T) {
 	// Test IPv4 /24 mask
 	config24 := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     24,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 24,
+		IPv6SubnetMask: 56,
 	}
 	limiter24 := New(config24)
 
 	// Test IPv6 /64 mask
 	config64 := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     64,
-		IncludeSource:      true,
-		IncludeDestination: true,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 64,
 	}
 	limiter64 := New(config64)
 
@@ -574,167 +552,5 @@ func TestNormalizeIPWithDifferentMasks(t *testing.T) {
 	expected64 := "2001:db8:85a3:8d3::"
 	if result64 != expected64 {
 		t.Errorf("IPv6 /64 normalization: got %q, want %q", result64, expected64)
-	}
-}
-
-func TestCacheKeyOptions(t *testing.T) {
-	// Test with IncludeSource=false, IncludeDestination=false
-	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      false,
-		IncludeDestination: false,
-	}
-	limiter := New(config)
-
-	// All requests should share the same cache key (only identifier matters)
-	ip1 := "192.168.1.1"
-	ip2 := "192.168.1.2"
-	dest1 := "api.example.com"
-	dest2 := "api.other.com"
-	identifier := "test-key"
-
-	// First request should be allowed
-	if retryAfter := limiter.IsAllowed(ip1, dest1, identifier); retryAfter != 0 {
-		t.Error("First request should be allowed")
-	}
-
-	// Second request with different IP and destination should be treated as second request
-	if retryAfter := limiter.IsAllowed(ip2, dest2, identifier); retryAfter != 0 {
-		t.Error("Second request with different IP/dest should be allowed (same identifier)")
-	}
-
-	// Third request should be blocked (limit reached for this identifier)
-	if retryAfter := limiter.IsAllowed(ip1, dest1, identifier); retryAfter == 0 {
-		t.Error("Third request should be blocked (identifier limit reached)")
-	}
-
-	// But different identifier should be allowed
-	if retryAfter := limiter.IsAllowed(ip1, dest1, "different-key"); retryAfter != 0 {
-		t.Error("Request with different identifier should be allowed")
-	}
-}
-
-func TestCacheKeySourceOnly(t *testing.T) {
-	// Test with IncludeSource=true, IncludeDestination=false
-	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      true,
-		IncludeDestination: false,
-	}
-	limiter := New(config)
-
-	ip1 := "192.168.1.1"
-	ip2 := "192.168.1.2"
-	dest1 := "api.example.com"
-	dest2 := "api.other.com"
-	identifier := "test-key"
-
-	// First request should be allowed
-	if retryAfter := limiter.IsAllowed(ip1, dest1, identifier); retryAfter != 0 {
-		t.Error("First request should be allowed")
-	}
-
-	// Second request with same IP but different destination should be treated as second request
-	if retryAfter := limiter.IsAllowed(ip1, dest2, identifier); retryAfter != 0 {
-		t.Error("Second request with same IP should be allowed")
-	}
-
-	// Third request with same IP should be blocked
-	if retryAfter := limiter.IsAllowed(ip1, dest1, identifier); retryAfter == 0 {
-		t.Error("Third request with same IP should be blocked")
-	}
-
-	// But different IP should be allowed
-	if retryAfter := limiter.IsAllowed(ip2, dest1, identifier); retryAfter != 0 {
-		t.Error("Request with different IP should be allowed")
-	}
-}
-
-func TestCacheKeyDestinationOnly(t *testing.T) {
-	// Test with IncludeSource=false, IncludeDestination=true
-	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      false,
-		IncludeDestination: true,
-	}
-	limiter := New(config)
-
-	ip1 := "192.168.1.1"
-	ip2 := "192.168.1.2"
-	dest1 := "api.example.com"
-	dest2 := "api.other.com"
-	identifier := "test-key"
-
-	// First request should be allowed
-	if retryAfter := limiter.IsAllowed(ip1, dest1, identifier); retryAfter != 0 {
-		t.Error("First request should be allowed")
-	}
-
-	// Second request with different IP but same destination should be treated as second request
-	if retryAfter := limiter.IsAllowed(ip2, dest1, identifier); retryAfter != 0 {
-		t.Error("Second request with same destination should be allowed")
-	}
-
-	// Third request with same destination should be blocked
-	if retryAfter := limiter.IsAllowed(ip1, dest1, identifier); retryAfter == 0 {
-		t.Error("Third request with same destination should be blocked")
-	}
-
-	// But different destination should be allowed
-	if retryAfter := limiter.IsAllowed(ip1, dest2, identifier); retryAfter != 0 {
-		t.Error("Request with different destination should be allowed")
-	}
-}
-
-func TestCacheKeyBothDisabled(t *testing.T) {
-	// Test with IncludeSource=false, IncludeDestination=false (identifier only)
-	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
-		IncludeSource:      false,
-		IncludeDestination: false,
-	}
-	limiter := New(config)
-
-	// All requests with same identifier should share the same limit
-	identifier := "shared-key"
-
-	// First request should be allowed
-	if retryAfter := limiter.IsAllowed("192.168.1.1", "api.example.com", identifier); retryAfter != 0 {
-		t.Error("First request should be allowed")
-	}
-
-	// Second request with completely different IP and destination should be treated as second request
-	if retryAfter := limiter.IsAllowed("10.0.0.1", "api.other.com", identifier); retryAfter != 0 {
-		t.Error("Second request should be allowed (same identifier)")
-	}
-
-	// Third request should be blocked
-	if retryAfter := limiter.IsAllowed("172.16.0.1", "api.third.com", identifier); retryAfter == 0 {
-		t.Error("Third request should be blocked (identifier limit reached)")
-	}
-
-	// But different identifier should be allowed
-	if retryAfter := limiter.IsAllowed("192.168.1.1", "api.example.com", "different-key"); retryAfter != 0 {
-		t.Error("Request with different identifier should be allowed")
 	}
 }
