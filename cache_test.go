@@ -554,3 +554,47 @@ func TestNormalizeIPWithDifferentMasks(t *testing.T) {
 		t.Errorf("IPv6 /64 normalization: got %q, want %q", result64, expected64)
 	}
 }
+
+func TestBlankInputs(t *testing.T) {
+	config := Config{
+		Capacity:           100,
+		WindowSize:         1 * time.Second,
+		MaxReqs:            2,
+		Expiration:         60 * time.Second,
+		IPv4SubnetMask:     32,
+		IPv6SubnetMask:     56,
+	}
+	limiter := New(config)
+
+	// Test blank IP scenario
+	// First request with blank IP should be allowed
+	if retryAfter := limiter.IsAllowed("", "api.example.com", ""); retryAfter != 0 {
+		t.Error("First request with blank IP should be allowed")
+	}
+
+	// Second request with blank IP should be allowed
+	if retryAfter := limiter.IsAllowed("", "api.example.com", ""); retryAfter != 0 {
+		t.Error("Second request with blank IP should be allowed")
+	}
+
+	// Third request with blank IP should be blocked (limit reached)
+	if retryAfter := limiter.IsAllowed("", "api.example.com", ""); retryAfter == 0 {
+		t.Error("Third request with blank IP should be blocked")
+	}
+
+	// Test blank destination scenario
+	// First request with blank destination should be allowed
+	if retryAfter := limiter.IsAllowed("192.168.1.1", "", ""); retryAfter != 0 {
+		t.Error("First request with blank destination should be allowed")
+	}
+
+	// Second request with blank destination should be allowed
+	if retryAfter := limiter.IsAllowed("192.168.1.1", "", ""); retryAfter != 0 {
+		t.Error("Second request with blank destination should be allowed")
+	}
+
+	// Third request with blank destination should be blocked (limit reached)
+	if retryAfter := limiter.IsAllowed("192.168.1.1", "", ""); retryAfter == 0 {
+		t.Error("Third request with blank destination should be blocked")
+	}
+}
