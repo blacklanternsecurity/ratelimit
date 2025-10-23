@@ -557,12 +557,12 @@ func TestNormalizeIPWithDifferentMasks(t *testing.T) {
 
 func TestBlankInputs(t *testing.T) {
 	config := Config{
-		Capacity:           100,
-		WindowSize:         1 * time.Second,
-		MaxReqs:            2,
-		Expiration:         60 * time.Second,
-		IPv4SubnetMask:     32,
-		IPv6SubnetMask:     56,
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
 	}
 	limiter := New(config)
 
