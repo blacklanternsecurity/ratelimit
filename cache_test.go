@@ -616,11 +616,6 @@ func TestLimiterClose(t *testing.T) {
 }
 
 func TestLimiterCloseWithRedis(t *testing.T) {
-	// Skip if Redis is not available
-	if testing.Short() {
-		t.Skip("Skipping Redis test in short mode")
-	}
-
 	config := Config{
 		Capacity:   100,
 		WindowSize: 1 * time.Second,
@@ -638,11 +633,127 @@ func TestLimiterCloseWithRedis(t *testing.T) {
 
 	limiter, err := NewWithRedis(config, redisConfig)
 	if err != nil {
-		t.Skipf("Redis not available, skipping test: %v", err)
+		t.Fatalf("Failed to create Redis limiter: %v", err)
 	}
 
 	// Close should not return an error
 	if err := limiter.Close(); err != nil {
 		t.Errorf("Close() should not return error for Redis cache, got: %v", err)
+	}
+}
+
+func TestLimiterClear(t *testing.T) {
+	config := Config{
+		Capacity:       100,
+		WindowSize:     1 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
+	}
+	limiter := New(config)
+	ip := "192.168.1.1"
+	destination := "api.example.com"
+
+	// Make requests to fill up the rate limit
+	if retryAfter := limiter.IsAllowed(ip, destination, ""); retryAfter != 0 {
+		t.Error("First request should be allowed")
+	}
+	if retryAfter := limiter.IsAllowed(ip, destination, ""); retryAfter != 0 {
+		t.Error("Second request should be allowed")
+	}
+	if retryAfter := limiter.IsAllowed(ip, destination, ""); retryAfter == 0 {
+		t.Error("Third request should be blocked")
+	}
+
+	// Clear the cache
+	limiter.Clear()
+
+	// After clearing, requests should be allowed again
+	if retryAfter := limiter.IsAllowed(ip, destination, ""); retryAfter != 0 {
+		t.Error("First request after clear should be allowed")
+	}
+	if retryAfter := limiter.IsAllowed(ip, destination, ""); retryAfter != 0 {
+		t.Error("Second request after clear should be allowed")
+	}
+	if retryAfter := limiter.IsAllowed(ip, destination, ""); retryAfter == 0 {
+		t.Error("Third request after clear should be blocked")
+	}
+}
+
+func TestMemoryCacheClear(t *testing.T) {
+	cache := NewMemoryCache(100, 60*time.Second)
+	defer cache.Close()
+
+	// Add some entries
+	key1 := uint64(1)
+	key2 := uint64(2)
+	limiter1 := &ClientLimiter{allowedRequests: 5.0, lastRequest: time.Now()}
+	limiter2 := &ClientLimiter{allowedRequests: 3.0, lastRequest: time.Now()}
+
+	cache.Set(key1, limiter1)
+	cache.Set(key2, limiter2)
+
+	// Verify entries exist
+	if cache.Get(key1) == nil {
+		t.Error("Expected limiter1 to be in cache")
+	}
+	if cache.Get(key2) == nil {
+		t.Error("Expected limiter2 to be in cache")
+	}
+
+	// Clear the cache
+	cache.Clear()
+
+	// Verify entries are gone
+	if cache.Get(key1) != nil {
+		t.Error("Expected limiter1 to be removed from cache")
+	}
+	if cache.Get(key2) != nil {
+		t.Error("Expected limiter2 to be removed from cache")
+	}
+}
+
+func TestRedisCacheClear(t *testing.T) {
+	config := RedisConfig{
+		Addr:      "localhost:6379",
+		Password:  "",
+		DB:        15,
+		KeyPrefix: "ratelimit:test:clear:",
+		TTL:       60 * time.Second,
+	}
+
+	cache, err := NewRedisCache(config)
+	if err != nil {
+		t.Fatalf("Failed to create Redis cache: %v", err)
+	}
+	defer cache.Close()
+
+	// Add some entries
+	key1 := uint64(1)
+	key2 := uint64(2)
+	limiter1 := &ClientLimiter{allowedRequests: 5.0, lastRequest: time.Now()}
+	limiter2 := &ClientLimiter{allowedRequests: 3.0, lastRequest: time.Now()}
+
+	cache.Set(key1, limiter1)
+	cache.Set(key2, limiter2)
+
+	// Verify entries exist
+	if cache.Get(key1) == nil {
+		t.Error("Expected limiter1 to be in cache")
+	}
+	if cache.Get(key2) == nil {
+		t.Error("Expected limiter2 to be in cache")
+	}
+
+	// Clear the cache
+	cache.Clear()
+
+	// Verify entries are gone
+	if cache.Get(key1) != nil {
+		t.Error("Expected limiter1 to be removed from cache")
+	}
+	if cache.Get(key2) != nil {
+		t.Error("Expected limiter2 to be removed from cache")
 	}
 }

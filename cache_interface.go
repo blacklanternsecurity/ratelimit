@@ -14,6 +14,9 @@ type Cache interface {
 	// If the key doesn't exist, this is a no-op
 	Delete(key uint64)
 
+	// Clear removes all entries from the cache
+	Clear()
+
 	// Close cleans up any resources used by the cache
 	// Returns an error if cleanup fails
 	Close() error
