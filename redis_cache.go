@@ -43,9 +43,15 @@ func NewRedisCache(config RedisConfig) (*RedisCache, error) {
 		return nil, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
 
+	// Set default key prefix if not specified
+	keyPrefix := config.KeyPrefix
+	if keyPrefix == "" {
+		keyPrefix = "ratelimit:"
+	}
+
 	return &RedisCache{
 		client:    rdb,
-		keyPrefix: config.KeyPrefix,
+		keyPrefix: keyPrefix,
 		ttl:       config.TTL,
 		ctx:       context.Background(),
 	}, nil
@@ -91,6 +97,18 @@ func (r *RedisCache) Set(key uint64, value *ClientLimiter) {
 func (r *RedisCache) Delete(key uint64) {
 	redisKey := r.getRedisKey(key)
 	r.client.Del(r.ctx, redisKey)
+}
+
+// Clear removes all entries from the cache by deleting all keys with the prefix
+func (r *RedisCache) Clear() {
+	pattern := r.keyPrefix + "*"
+	keys, err := r.client.Keys(r.ctx, pattern).Result()
+	if err != nil {
+		return // Fail silently
+	}
+	if len(keys) > 0 {
+		r.client.Del(r.ctx, keys...)
+	}
 }
 
 // Close closes the Redis connection

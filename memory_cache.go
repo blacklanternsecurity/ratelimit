@@ -38,6 +38,11 @@ func (m *MemoryCache) Delete(key uint64) {
 	m.cache.Remove(key)
 }
 
+// Clear removes all entries from the cache
+func (m *MemoryCache) Clear() {
+	m.cache.Purge()
+}
+
 // Close cleans up any resources used by the cache
 func (m *MemoryCache) Close() error {
 	// Memory cache doesn't need explicit cleanup

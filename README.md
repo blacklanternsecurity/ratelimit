@@ -1,6 +1,6 @@
 # Rate Limiter
 
-[![Go Version](https://img.shields.io/badge/go-1.19+-FF8400.svg)](https://golang.org/) [![License](https://img.shields.io/badge/license-GPLv3-FF8400.svg)](LICENSE) [![Tests](https://github.com/blacklanternsecurity/ratelimit/workflows/Tests/badge.svg)](https://github.com/blacklanternsecurity/ratelimit/actions)
+[![Go Version](https://img.shields.io/badge/go-1.21+-FF8400.svg)](https://golang.org/) [![License](https://img.shields.io/badge/license-GPLv3-FF8400.svg)](LICENSE) [![Tests](https://github.com/blacklanternsecurity/ratelimit/workflows/Tests/badge.svg)](https://github.com/blacklanternsecurity/ratelimit/actions)
 
 A high-performance, non-blocking token bucket rate limiter designed for HTTP projects. Features accurate retry-after headers, multiple cache backends (in-memory and Redis), and flexible IP normalization to prevent circumvention via [IPv6 source address spoofing](https://github.com/blacklanternsecurity/trevorproxy).
 
@@ -116,6 +116,20 @@ Checks if a request should be allowed and returns the retry-after time in second
 **Returns:**
 - `0`: Request is allowed
 - `>0`: Request blocked, retry after N seconds
+
+### `Clear()`
+
+Removes all rate limiting entries from the cache, effectively resetting all rate limits.
+
+**Examples:**
+```go
+// Clear all rate limits
+limiter.Clear()
+
+// After clearing, all clients start fresh
+retryAfter := limiter.IsAllowed("192.168.1.1", "api.example.com", "user123")
+// retryAfter will be 0 (allowed) since the rate limit was reset
+```
 
 ### Examples
 

@@ -191,6 +191,11 @@ func (l *Limiter) IsAllowed(ip, destination, identifier string, maxReqs ...int) 
 	return retryAfter
 }
 
+// Clear removes all entries from the rate limiter cache
+func (l *Limiter) Clear() {
+	l.cache.Clear()
+}
+
 // Close closes the underlying cache and cleans up resources
 func (l *Limiter) Close() error {
 	return l.cache.Close()
