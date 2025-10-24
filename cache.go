@@ -198,5 +198,6 @@ func (l *Limiter) Clear() {
 
 // Close closes the underlying cache and cleans up resources
 func (l *Limiter) Close() error {
+	l.cache.Clear()
 	return l.cache.Close()
 }
