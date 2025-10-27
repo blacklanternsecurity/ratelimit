@@ -128,7 +128,17 @@ func (l *Limiter) createCacheKey(normalizedIP, destination, identifier string) u
 	return h.Sum64()
 }
 
+// IsAllowed performs the rate limiting check and decrements the user's requests
 func (l *Limiter) IsAllowed(ip, destination, identifier string, maxReqs ...int) int {
+	return l.IsAllowedWithDecrement(ip, destination, identifier, true, maxReqs...)
+}
+
+// CheckAllowed performs the same rate limiting check as IsAllowed but doesn't count against the user's requests
+func (l *Limiter) CheckAllowed(ip, destination, identifier string, maxReqs ...int) int {
+	return l.IsAllowedWithDecrement(ip, destination, identifier, false, maxReqs...)
+}
+
+func (l *Limiter) IsAllowedWithDecrement(ip, destination, identifier string, decrement bool, maxReqs ...int) int {
 	now := time.Now()
 
 	// Normalize the IP address and destination
@@ -173,7 +183,10 @@ func (l *Limiter) IsAllowed(ip, destination, identifier string, maxReqs ...int) 
 		clientLimiter.allowedRequests = float64(rateLimit)
 	}
 
-	clientLimiter.allowedRequests--
+	// Only decrement if decrement is true
+	if decrement {
+		clientLimiter.allowedRequests--
+	}
 
 	// Store the updated state back to cache
 	l.cache.Set(cacheKey, clientLimiter)

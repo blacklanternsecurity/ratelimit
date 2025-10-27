@@ -105,7 +105,7 @@ defer limiter.Close()
 
 ### `IsAllowed(ip, destination, identifier string, maxReqs ...int) int`
 
-Checks if a request should be allowed and returns the retry-after time in seconds.
+Checks if a request should be allowed and returns the retry-after time in seconds. This method counts the request against the user's quota.
 
 **Parameters:**
 - `ip`: Source IP address (optional, automatically normalized)
@@ -116,6 +116,10 @@ Checks if a request should be allowed and returns the retry-after time in second
 **Returns:**
 - `0`: Request is allowed
 - `>0`: Request blocked, retry after N seconds
+
+### `CheckAllowed(ip, destination, identifier string, maxReqs ...int) int`
+
+Same as `IsAllowed` except it doesn't count the request against the user's quota. Useful for health checks, monitoring, or pre-flight requests.
 
 ### `Clear()`
 
@@ -142,6 +146,9 @@ retryAfter := limiter.IsAllowed("192.168.1.1", "api.example.com", "login", 5) //
 
 // Global rate limiting (no destination)
 retryAfter := limiter.IsAllowed("192.168.1.1", "", "global")
+
+// Check quota without consuming it (useful for health checks)
+retryAfter := limiter.CheckAllowed("192.168.1.1", "api.example.com", "health")
 ```
 
 ## IP Normalization
