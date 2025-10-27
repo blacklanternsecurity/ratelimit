@@ -714,6 +714,78 @@ func TestMemoryCacheClear(t *testing.T) {
 	}
 }
 
+func TestCheckAllowed(t *testing.T) {
+	// 2 requests per 5 seconds
+	config := Config{
+		Capacity:       100,
+		WindowSize:     5 * time.Second,
+		MaxReqs:        2,
+		Expiration:     60 * time.Second,
+		IPv4SubnetMask: 32,
+		IPv6SubnetMask: 56,
+	}
+	limiter := New(config)
+	ip := "192.168.1.1"
+	destination := "api.example.com"
+
+	// Test 1: CheckAllowed should not consume quota
+	// First check should be allowed
+	retryAfter1 := limiter.CheckAllowed(ip, destination, "")
+	if retryAfter1 != 0 {
+		t.Errorf("CheckAllowed 1 should be allowed, got retry-after: %d", retryAfter1)
+	}
+
+	// Second check should still be allowed (quota not consumed)
+	retryAfter2 := limiter.CheckAllowed(ip, destination, "")
+	if retryAfter2 != 0 {
+		t.Errorf("CheckAllowed 2 should be allowed, got retry-after: %d", retryAfter2)
+	}
+
+	// Third check should still be allowed (quota still not consumed)
+	retryAfter3 := limiter.CheckAllowed(ip, destination, "")
+	if retryAfter3 != 0 {
+		t.Errorf("CheckAllowed 3 should be allowed, got retry-after: %d", retryAfter3)
+	}
+
+	// Test 2: IsAllowed should consume quota
+	// First actual request should be allowed
+	retryAfter4 := limiter.IsAllowed(ip, destination, "")
+	if retryAfter4 != 0 {
+		t.Errorf("IsAllowed 1 should be allowed, got retry-after: %d", retryAfter4)
+	}
+
+	// Second actual request should be allowed
+	retryAfter5 := limiter.IsAllowed(ip, destination, "")
+	if retryAfter5 != 0 {
+		t.Errorf("IsAllowed 2 should be allowed, got retry-after: %d", retryAfter5)
+	}
+
+	// Third actual request should be blocked (quota consumed)
+	retryAfter6 := limiter.IsAllowed(ip, destination, "")
+	if retryAfter6 == 0 {
+		t.Error("IsAllowed 3 should be blocked")
+	}
+
+	// Test 3: CheckAllowed should still work after quota is consumed
+	// CheckAllowed should return the same retry-after as IsAllowed
+	retryAfter7 := limiter.CheckAllowed(ip, destination, "")
+	if retryAfter7 == 0 {
+		t.Error("CheckAllowed after quota consumed should be blocked")
+	}
+	if retryAfter7 != retryAfter6 {
+		t.Errorf("CheckAllowed retry-after (%d) should match IsAllowed retry-after (%d)", retryAfter7, retryAfter6)
+	}
+
+	// Test 4: Multiple CheckAllowed calls should not affect each other
+	retryAfter8 := limiter.CheckAllowed(ip, destination, "")
+	retryAfter9 := limiter.CheckAllowed(ip, destination, "")
+	retryAfter10 := limiter.CheckAllowed(ip, destination, "")
+
+	if retryAfter8 != retryAfter9 || retryAfter9 != retryAfter10 {
+		t.Error("Multiple CheckAllowed calls should return consistent results")
+	}
+}
+
 func TestRedisCacheClear(t *testing.T) {
 	config := RedisConfig{
 		Addr:      "localhost:6379",
